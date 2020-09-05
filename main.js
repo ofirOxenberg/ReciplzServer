@@ -3,14 +3,15 @@ const cors = require("cors");
 
 const corsConfig = {
     origin: true,
-    credentials: true
+    credentials: true,
+    exposedHeaders: ['set-cookie']
 };
 
 //#region express configures
 const express = require("express");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
-const session = require("client-sessions");
+const session = require("express-session");
 const DButils = require("./modules/DButils");
 
 // routes importing 
@@ -28,18 +29,21 @@ app.use(morgan(":method :url :status  :response-time ms"));
 ///app.use(cors);
 app.use(cors(corsConfig));
 app.options("*", cors(corsConfig));
-
 app.use(
     session({
-        cookieName: "session", // the cookie key name
+        name: 'session', // the cookie key name
         secret: process.env.COOKIE_SECRET, // the encryption key
-        duration: 20 * 60 * 1000, // expired after 20 sec
-        activeDuration: 0, // if expiresIn < activeDuration,
+        // activeDuration: 0, // if expiresIn < activeDuration,
+        proxy : true,
         //the session will be extended by activeDuration milliseconds
         cookie: {
-            httpOnly: false
-        }
-
+            path: '/',
+            httpOnly: false,
+            saveUninitialized: true,
+            sameSite: false,
+            secure: false,
+            maxAge:  20 * 60 * 1000 // session last a minute.
+        }, 
     })
 );
 
@@ -48,6 +52,7 @@ app.use(
 //#region cookie middleware
 app.use(function(req, res, next) {
     if (req.session && req.session.user_id) {
+        console.log('req.session', req.session);
         DButils.execQuery("SELECT user_id FROM users")
             .then((users) => {
                 if (users.find((x) => x.user_id === req.session.user_id)) {
@@ -55,7 +60,7 @@ app.use(function(req, res, next) {
                 }
                 next();
             })
-            .catch((error) => next());
+            .catch((error) => {console.log('error in cookie middleware: ', error); next();});
     } else {
         next();
     }
@@ -85,4 +90,4 @@ process.on("SIGINT", function() {
         server.close(() => console.log("server closed"));
     }
     process.exit();
-}); 
+});

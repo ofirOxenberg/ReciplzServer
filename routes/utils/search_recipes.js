@@ -11,8 +11,9 @@ async function getRecipesInfo(recipes_id_list, preview) {
     recipes_id_list.map((id) =>
         promises.push(axios.get(`${recipes_api}/${id}/information?${api_key}`))
     );
-    // return all the results of the promises
+    // return all the results of the promises 
     let info_response = await Promise.all(promises);
+    console.log('info_response on getRecipesInfo: ', info_response);
     if (preview) {
         return extractRelvantRecipesDataPreview(info_response);
     }
@@ -70,7 +71,6 @@ function extractRelvantRecipesDataFullview(recipes_info) {
     });
 
     return recipes_info;
-}
 
 // this function extract the instructions for recipe from the spooncular api 
 function extractInstructions(recipes_info) {
@@ -111,6 +111,7 @@ function extractRelvantRecipesDataPreview(recipes_info) {
 
     });
 }
+
 // this is the main function for search recipes - returns preivew of the recipes as
 // dictioary 
 async function searchForRecipes(search_params) {
@@ -152,6 +153,7 @@ function extractQueriesParams(query_params, search_params) {
 // this function return 3 random recipes - preview 
 async function getRandomRecipes(random_params) {
     const info_array = await findRecipesWithInstructions(random_params);
+    // let info_array = await getRecipesInfo(recipes_id_list, true);
     return info_array;
 }
 
@@ -165,7 +167,6 @@ async function findRecipesWithInstructions(random_params) {
             findRecipesWithInstructions(random_params);
         }
     });
-
     return random_recipe.data.recipes.map((recipe_info) => {
         const {
             id,
