@@ -1,0 +1,7 @@
+*.pptx
+.env
+.vscode
+package-lock.json
+node_modules
+#codes/routes/recipes.js
+#codes\routes\recipes.js
