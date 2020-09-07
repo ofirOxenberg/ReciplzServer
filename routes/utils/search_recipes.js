@@ -71,6 +71,7 @@ function extractRelvantRecipesDataFullview(recipes_info) {
     });
 
     return recipes_info;
+}
 
 // this function extract the instructions for recipe from the spooncular api 
 function extractInstructions(recipes_info) {
