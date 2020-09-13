@@ -109,14 +109,14 @@ router.put("/recipesForMeal/recipeId/:recipeId/:mealId", async(req, res, next) =
         { //this recipe is not in the meal of this user_id.
             throw { status: 408, message: "you don't have any meal" }
         }
-        elseif (resultIfUserHaveMeal.length > 0 & resultIfRecipeExistInMeal.length==0)
+        else if (resultIfUserHaveMeal.length > 0 & resultIfRecipeExistInMeal.length==0)
         {
             await DButils.execQuery( //adds recipe to meal
                 `INSERT INTO recipesForMeal VALUES ('${meal_ID}','${recipe_ID}')`)
             
             res.status(200).send({ message: "saved to your next meal successfully." })
         }
-        elseif( resultIfUserHaveMeal.length>0 & !(resultIfRecipeExistInMeal==0))
+        else if( resultIfUserHaveMeal.length>0 & !(resultIfRecipeExistInMeal==0))
         {
             throw { status: 408, message: "recipe is already in this meal." }
         }
