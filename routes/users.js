@@ -84,6 +84,45 @@ router.put("/add_to_favorites/recipeId/:recipeId", async(req, res, next) => {
 });
 
 
+router.put("/recipesForMeal/recipeId/:recipeId/:mealId", async(req, res, next) => {
+    try {
+        const user_ID = req.session.user_id;
+        const recipe_ID = req.params.recipeId;
+        const meal_ID = req.params.meal_ID;
+
+        const recipe =
+            await search_util.getRecipesInfo([recipe_ID], false)
+
+        if (!recipe)
+            throw { status: 400, message: "recipe not found" }
+        
+            const resultIfRecipeExistInMeal = await DButils.execQuery( // Verify if the user have this recipe in this meal
+            `SELECT * FROM meals  INNER JOIN recipesForMeal ON meals.meal_id=recipesForMeal.meal_id 
+            WHERE user_id = '${user_ID}' AND recipe_id = '${recipe_ID}' AND meals.meal_id= '${meal_ID}'`)
+        
+            const resultIfUserHaveMeal = await DButils.execQuery(
+            `SELECT meal_id FROM meals WHERE user_id = '${user_ID}'`) //Verify if the user have meals 
+
+        if (resultIfUserHaveMeal.length == 0) 
+        { //this recipe is not in the meal of this user_id.
+            throw { status: 408, message: "you don't have any meal" }
+        }
+        elseif (resultIfUserHaveMeal.length > 0 & resultIfRecipeExistInMeal==0)
+        {
+            await DButils.execQuery( //adds recipe to meal
+                `INSERT INTO recipesForMeal VALUES ('${meal_ID}','${recipe_ID}')`)
+        }
+        elseif( resultIfUserHaveMeal.length>0 & !(resultIfRecipeExistInMeal==0))
+        {
+            throw { status: 408, message: "recipe is already in this meal." }
+        }
+        res.status(200).send({ message: "saved to your favorites recipes successfully." })
+    } catch (error) {
+        next(error)
+    }
+});
+
+
 // adds current recipe_ID to the watched recipes table. (using the user' cookie)
 router.put("/add_to_watched/recipeId/:recipeId", async(req, res, next) => {
     try {
