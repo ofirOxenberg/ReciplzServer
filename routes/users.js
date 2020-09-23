@@ -23,10 +23,19 @@ router.get("/recipeInfo/:ids", async(req, res) => {
     res.send(userRecipeData);
 });
 
-router.get("/myMeals", async(req, res) => {
+router.get("/myMealsRecipes", async(req, res) => {
     const user_ID = req.user_id;
     const result = await DButils.execQuery(
         `SELECT meals.meal_name,recipesForMeal.meal_id,recipesForMeal.recipe_id FROM meals JOIN recipesForMeal ON meals.meal_id=recipesForMeal.meal_id
+        WHERE user_id = '${user_ID}'`)
+        
+
+    res.send(result);
+});
+router.get("/myMeals", async(req, res) => {
+    const user_ID = req.user_id;
+    const result = await DButils.execQuery(
+        `SELECT meal_id,recipesForMeal.recipe_id FROM meals 
         WHERE user_id = '${user_ID}'`)
 
 
