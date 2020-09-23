@@ -37,7 +37,6 @@ router.get("/myMeals", async(req, res) => {
     const result = await DButils.execQuery(
         `SELECT meal_id, meal_name FROM meals WHERE user_id = '${user_ID}'`)
 
-
     res.send(result);
 });
 
