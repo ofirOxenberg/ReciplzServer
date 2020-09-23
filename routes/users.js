@@ -26,9 +26,9 @@ router.get("/recipeInfo/:ids", async(req, res) => {
 router.get("/myMeals", async(req, res) => {
     const user_ID = req.user_id;
     const result = await DButils.execQuery(
-        `SELECT * FROM meals INNER JOIN recipesForMeal ON meals.meal_id=recipesForMeal.meal_id
+        `SELECT meals.meal_name,recipesForMeal.meal_id,recipesForMeal.recipe_id FROM meals JOIN recipesForMeal ON meals.meal_id=recipesForMeal.meal_id
         WHERE user_id = '${user_ID}'`)
-        
+
 
     res.send(result);
 });
