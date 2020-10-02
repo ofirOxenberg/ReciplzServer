@@ -32,12 +32,67 @@ router.get("/myMealsRecipes", async(req, res) => {
 
     res.send(result);
 });
+
+router.get("/getRecipesMealsFlags/:recipeId", async(req, res) => {
+    try{
+    const user_ID = req.user_id;
+    const recipe_ID = req.params.recipeId;
+
+    const meals = await DButils.execQuery(
+        `SELECT meal_name,meal_id FROM meals 
+        WHERE user_id = '${user_ID}'`)
+
+    const mr = await DButils.execQuery(
+        `SELECT meal_id FROM recipesForMeal 
+        WHERE recipe_id = '${recipe_ID}'`)
+
+    
+    var ans = {}
+
+    meals.forEach(meal => {
+        ans[meal.meal_id] = {name : meal.meal_name, meal_id : meal.meal_id, flag : mr.includes(meal.meal_id)}
+    });    
+
+    res.send(ans);
+}catch(error){
+    res.send(error);
+}
+});
+
 router.get("/myMeals", async(req, res) => {
     const user_ID = req.user_id;
     const result = await DButils.execQuery(
         `SELECT meal_id, meal_name FROM meals WHERE user_id = '${user_ID}'`)
 
     res.send(result);
+});
+
+router.get("preview/myMeals", async(req, res) => {
+    const user_ID = req.user_id;
+    const result = await DButils.execQuery(
+        `SELECT meal_id, meal_name FROM meals WHERE user_id = '${user_ID}'`)
+    
+        var ans = {};
+        result.forEach(element => {
+        
+    const recipes_ids = await DButils.execQuery(
+            `SELECT recipe_id FROM recipesForMeal WHERE meal_id = '${element.meal_id}'`)
+    
+        if (recipes_ids && recipes_ids.length > 0) {
+            const my_recipes_list = []
+            recipes_ids.forEach(recipeId => {
+                my_recipes_list.push(recipeId.recipe_id);
+            });
+            search_util.getRecipesInfo(my_recipes_list, true)
+                .then((info_array) => res.send(info_array))
+                .catch((error) => {
+                    res.sendStatus(error.response.status);
+                });
+        }
+    
+        ans[element.meal_name] = {meal_name: element.meal_name, list:my_recipes_list};    
+    });
+    res.send(ans);
 });
 
 // help function. checks in the DB.
@@ -155,6 +210,25 @@ router.put("/add_new_recipe", async(req, res, next) => {
 
     }
 });
+
+router.put("/creat_meal/:mealName", async(req, res, next) =>
+{
+    try{
+        const user_ID = req.session.user_id;
+        const mealName = req.params.mealName;
+        const max_mealId = await DButils.execQuery( 
+            `SELECT max(meal_id) FROM meals`)
+        
+        await DButils.execQuery(
+            `INSERT INTO meals VALUES (default, '${mealName}', '${user_ID}')`)
+
+        res.status(200).send(max_mealId+1)
+    }catch (error) {
+        res.status(502).send(error)
+    }
+
+}
+)
 
 // adds current recipe_ID to the watched recipes table. (using the user' cookie)
 router.put("/add_to_watched/recipeId/:recipeId", async(req, res, next) => {
