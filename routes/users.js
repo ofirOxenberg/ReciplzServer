@@ -73,7 +73,7 @@ router.get("preview/myMeals", async(req, res) => {
         `SELECT meal_id, meal_name FROM meals WHERE user_id = '${user_ID}'`)
     
         var ans = {};
-        result.forEach(element => {
+        result.forEach(async(element) => {
         
     const recipes_ids = await DButils.execQuery(
             `SELECT recipe_id FROM recipesForMeal WHERE meal_id = '${element.meal_id}'`)
