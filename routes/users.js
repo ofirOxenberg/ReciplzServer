@@ -90,9 +90,9 @@ router.get("/preview/myMeals", async(req, res) => {
                 });
         }
     
-        ans[element.meal_name] = {meal_name: element.meal_name, list:my_recipes_list};    
+        //ans[element.meal_name] = {meal_name: element.meal_name, list:my_recipes_list};    
     });
-    res.send(ans);
+    //res.send(ans);
 });
 
 // help function. checks in the DB.
