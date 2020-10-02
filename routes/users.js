@@ -436,7 +436,7 @@ router.get("/fullview/my_favorites", async(req, res, next) => {
 
 
 router.get("/preview/myMeals", async(req, res) => {
-    const user_ID = req.user_id;
+    const user_ID = req.session.user_id
     // const result = await DButils.execQuery(
     //     `SELECT meal_id, meal_name FROM meals WHERE user_id = '${user_ID}'`)
     
