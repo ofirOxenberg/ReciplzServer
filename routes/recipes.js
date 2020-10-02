@@ -26,14 +26,15 @@ router.get("/search/query/:searchQuery/amount/:num",
 // this function returns 3 random recipes who have instructions!
 router.get("/randomRecipes", async(req, res, next) => {
     try {
-        random_params = {};
-        random_params.number = 3;
-        search_util.getRandomRecipes(random_params)
-            .then((info_array) => res.send(info_array))
-            .catch((error) => {
-                console.log('error in random recipes: ',error);
-                res.sendStatus(error.response.status);
-            });
+        // random_params = {};
+        // random_params.number = 3;
+        // search_util.getRandomRecipes(random_params)
+        //     .then((info_array) => res.send(info_array))
+        //     .catch((error) => {
+        //         console.log('error in random recipes: ',error);
+        //         res.sendStatus(error.response.status);
+        //     });
+        res.send({})
     } catch (error) {
         console.log(error);
         res.send(error)
