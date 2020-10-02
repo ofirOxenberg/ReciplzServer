@@ -142,6 +142,24 @@ router.put("/recipesForMeal/recipeId/:recipeId/:mealId", async(req, res, next) =
     }
 });
 
+router.put("/creat_meal/:mealName", async(req, res, next) =>
+{
+    try{
+        const user_ID = req.session.user_id;
+        const mealName = req.params.mealName;
+        const max_mealId = await DButils.execQuery( 
+            `SELECT max(meal_id) FROM meals`)
+        
+        await DButils.execQuery(
+            `INSERT INTO meals VALUES ('${max_mealId+1}', '${mealName}', '${user_ID}')`)
+
+        res.status(200).send(max_mealId+1)
+    }catch (error) {
+        next(error)
+    }
+
+}
+)
 
 // adds current recipe_ID to the watched recipes table. (using the user' cookie)
 router.put("/add_to_watched/recipeId/:recipeId", async(req, res, next) => {
