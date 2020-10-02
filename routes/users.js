@@ -73,7 +73,7 @@ router.get("/preview/myMeals", async(req, res) => {
         `SELECT meal_id, meal_name FROM meals WHERE user_id = '${user_ID}'`)
     
         var ans = {};
-        result.forEach(element => {
+        result.forEach(async(element) => {
         
     const recipes_ids = await DButils.execQuery(
             `SELECT recipe_id FROM recipesForMeal WHERE meal_id = '${element.meal_id}'`)
@@ -194,6 +194,20 @@ router.put("/recipesForMeal/recipeId/:recipeId/:mealId", async(req, res, next) =
         }
     } catch (error) {
         next(error)
+    }                           
+});
+
+router.put("/add_new_recipe", async(req, res, next) => {
+    try{
+        const recipe_name = await DButils.execQuery("SELECT recipe_name FROM MyRecipes");
+        if (recipe_name.find((x) => x.recipe_name === req.body.recipe_name)){
+            throw { status: 409, message: "Recipe name taken" }
+        }
+
+        
+    }
+    catch{
+
     }
 });
 
@@ -497,7 +511,7 @@ router.get("/my_last_watched", async(req, res, next) => {
 
     } catch (error) {
         console.log('my last watched error: ', error);
-        next(error)
+        res.send(error)
     }
 });
 

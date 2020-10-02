@@ -35,7 +35,8 @@ router.get("/randomRecipes", async(req, res, next) => {
                 res.sendStatus(error.response.status);
             });
     } catch (error) {
-        next(error);
+        console.log(error);
+        res.send(error)
     }
 });
 
