@@ -67,6 +67,34 @@ router.get("/myMeals", async(req, res) => {
     res.send(result);
 });
 
+router.get("preview/myMeals", async(req, res) => {
+    const user_ID = req.user_id;
+    const result = await DButils.execQuery(
+        `SELECT meal_id, meal_name FROM meals WHERE user_id = '${user_ID}'`)
+    
+        var ans = {};
+        result.forEach(element => {
+        
+    const recipes_ids = await DButils.execQuery(
+            `SELECT recipe_id FROM recipesForMeal WHERE meal_id = '${element.meal_id}'`)
+    
+        if (recipes_ids && recipes_ids.length > 0) {
+            const my_recipes_list = []
+            recipes_ids.forEach(recipeId => {
+                my_recipes_list.push(recipeId.recipe_id);
+            });
+            search_util.getRecipesInfo(my_recipes_list, true)
+                .then((info_array) => res.send(info_array))
+                .catch((error) => {
+                    res.sendStatus(error.response.status);
+                });
+        }
+    
+        ans[element.meal_name] = {meal_name: element.meal_name, list:my_recipes_list};    
+    });
+    res.send(ans);
+});
+
 // help function. checks in the DB.
 async function getUserInfoOnRecipes(user_id, ids) {
     const userRecipesData = {};
