@@ -32,6 +32,29 @@ router.get("/myMealsRecipes", async(req, res) => {
 
     res.send(result);
 });
+
+router.get("/getRecipesMealsFlags/:recipeId", async(req, res) => {
+    const user_ID = req.user_id;
+    const recipe_ID = req.params.recipeId;
+
+    const meals = await DButils.execQuery(
+        `SELECT meal_name,meal_id FROM meals 
+        WHERE user_id = '${user_ID}'`)
+
+    const mr = await DButils.execQuery(
+        `SELECT meal_id FROM recipesForMeal 
+        WHERE recipe_id = '${recipe_id}'`)
+
+    
+    var ans = {}
+
+    meals.forEach(meal => {
+        ans[meal.meal_id] = {name : meal.meal_name, meal_id : meal.meal_id, flag : mr.includes(meal.meal_id)}
+    });    
+
+    res.send(ans);
+});
+
 router.get("/myMeals", async(req, res) => {
     const user_ID = req.user_id;
     const result = await DButils.execQuery(
