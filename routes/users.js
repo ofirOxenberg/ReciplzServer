@@ -34,6 +34,7 @@ router.get("/myMealsRecipes", async(req, res) => {
 });
 
 router.get("/getRecipesMealsFlags/:recipeId", async(req, res) => {
+    try{
     const user_ID = req.user_id;
     const recipe_ID = req.params.recipeId;
 
@@ -53,6 +54,9 @@ router.get("/getRecipesMealsFlags/:recipeId", async(req, res) => {
     });    
 
     res.send(ans);
+}catch(error){
+    res.send(error);
+}
 });
 
 router.get("/myMeals", async(req, res) => {
