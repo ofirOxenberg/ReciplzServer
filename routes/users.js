@@ -33,7 +33,7 @@ router.get("/myMealsRecipes", async(req, res) => {
     res.send(result);
 });
 
-router.put("/getRecipesMealsFlags/:recipeId", async(req, res) => {
+router.get("/getRecipesMealsFlags/:recipeId", async(req, res) => {
     try{
     const user_ID = req.user_id;
     const recipe_ID = req.params.recipeId;
