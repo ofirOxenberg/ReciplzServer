@@ -155,7 +155,7 @@ router.put("/creat_meal/:mealName", async(req, res, next) =>
 
         res.status(200).send(max_mealId+1)
     }catch (error) {
-        next(error)
+        res.status(502).send(error)
     }
 
 }
