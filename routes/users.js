@@ -151,7 +151,7 @@ router.put("/creat_meal/:mealName", async(req, res, next) =>
             `SELECT max(meal_id) FROM meals`)
         
         await DButils.execQuery(
-            `INSERT INTO meals VALUES ('${max_mealId+1}', '${mealName}', '${user_ID}')`)
+            `INSERT INTO meals VALUES (default, '${mealName}', '${user_ID}')`)
 
         res.status(200).send(max_mealId+1)
     }catch (error) {
