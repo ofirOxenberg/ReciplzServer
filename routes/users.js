@@ -139,9 +139,22 @@ router.put("/recipesForMeal/recipeId/:recipeId/:mealId", async(req, res, next) =
         }
     } catch (error) {
         next(error)
-    }
+    }                           
 });
 
+router.put("/add_new_recipe", async(req, res, next) => {
+    try{
+        const recipe_name = await DButils.execQuery("SELECT recipe_name FROM MyRecipes");
+        if (recipe_name.find((x) => x.recipe_name === req.body.recipe_name)){
+            throw { status: 409, message: "Recipe name taken" }
+        }
+
+        
+    }
+    catch{
+
+    }
+});
 
 // adds current recipe_ID to the watched recipes table. (using the user' cookie)
 router.put("/add_to_watched/recipeId/:recipeId", async(req, res, next) => {
@@ -424,7 +437,7 @@ router.get("/my_last_watched", async(req, res, next) => {
 
     } catch (error) {
         console.log('my last watched error: ', error);
-        next(error)
+        res.send(error)
     }
 });
 
