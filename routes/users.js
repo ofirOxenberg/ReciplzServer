@@ -33,7 +33,7 @@ router.get("/myMealsRecipes", async(req, res) => {
     res.send(result);
 });
 
-router.get("/getRecipesMealsFlags/:recipeId", async(req, res) => {
+router.put("/getRecipesMealsFlags/:recipeId", async(req, res) => {
     try{
     const user_ID = req.user_id;
     const recipe_ID = req.params.recipeId;
@@ -44,7 +44,7 @@ router.get("/getRecipesMealsFlags/:recipeId", async(req, res) => {
 
     const mr = await DButils.execQuery(
         `SELECT meal_id FROM recipesForMeal 
-        WHERE recipe_id = '${recipe_id}'`)
+        WHERE recipe_id = '${recipe_ID}'`)
 
     
     var ans = {}
