@@ -202,10 +202,11 @@ router.put("/add_new_recipe", async(req, res, next) => {
         let username= req.body.username;
         let recipeName= req.body.recipeName;
         let instruction= req.body.instruction;
+        let ready_in_minutes= req.body.ready_in_minutes;
 
         await DButils.execQuery(
             `INSERT INTO MyRecipes VALUES (user_ID,default,[{default, '${username}'
-            , '${recipeName}', '${image}', '${instruction}'}])`
+            , '${recipeName}', '${image}','${ready_in_minutes}', '${instruction}'}])`
         );
         res.status(201).send({ message: "recipe created", success: true });
     } catch (error) {
