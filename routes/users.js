@@ -23,13 +23,14 @@ router.get("/recipeInfo/:ids", async(req, res) => {
     res.send(userRecipeData);
 });
 
-router.get("/myMealsRecipes", async(req, res) => {
-    const user_ID = req.user_id;
+router.get("/myMealRecipes/:mealId", async(req, res) => {
+    const user_ID = req.session.user_id;;
+    const mealId = req.params.mealId;
     const result = await DButils.execQuery(
-        `SELECT meals.meal_name,recipesForMeal.meal_id,recipesForMeal.recipe_id FROM meals JOIN recipesForMeal ON meals.meal_id=recipesForMeal.meal_id
-        WHERE user_id = '${user_ID}'`)
-        
-
+        `SELECT meals.meal_name,recipesForMeal.meal_id,recipesForMeal.recipe_id 
+        FROM meals JOIN recipesForMeal 
+        ON meals.meal_id=recipesForMeal.meal_id
+        WHERE meals.meal_id = '${mealId}'`)
     res.send(result);
 });
 
@@ -434,7 +435,7 @@ router.get("/fullview/my_favorites", async(req, res, next) => {
     }
 });
 
-
+//Return the recipe_Id accroding to user_id
 router.get("/preview/myMeals", async(req, res) => {
     const user_ID = req.session.user_id
     // const result = await DButils.execQuery(
