@@ -467,7 +467,7 @@ router.get("/preview/myMeals/:meal_id", async(req, res) => {
             `select recipe_id from recipesForMeal
             join meals 
             on meals.meal_id = recipesForMeal.meal_id 
-            where meals.user_id = '${user_ID} and meals.meal_id = ${meal_ID}`)
+            where meals.user_id = '${user_ID}' and meals.meal_id = '${meal_ID}'`)
     
         if (recipes_ids && recipes_ids.length > 0) {
             const my_recipes_list = []
