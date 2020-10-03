@@ -39,7 +39,7 @@ router.get("/myMealRecipes/:mealId", async(req, res) => {
 //Return the meal flag, if the meal should be marked for in this recipe
 router.get("/getRecipesMealsFlags/:recipeId", async(req, res) => {
     try{
-    const user_ID = req.user_id;
+    const user_ID = req.session.user_id;
     const recipe_ID = req.params.recipeId;
 
     const meals = await DButils.execQuery(
@@ -63,11 +63,11 @@ router.get("/getRecipesMealsFlags/:recipeId", async(req, res) => {
 }
 });
 
-//Return the meal_id and meal_name according to user_id
+//Return the meal_name according to user_id
 router.get("/myMeals", async(req, res) => {
     const user_ID = req.session.user_id;
     const result = await DButils.execQuery(
-        `SELECT meal_id, meal_name FROM meals WHERE user_id = '${user_ID}'`)
+        `SELECT meal_name FROM meals WHERE user_id = '${user_ID}'`)
 
     res.send(result);
 });
@@ -445,8 +445,9 @@ router.get("/fullview/my_favorites", async(req, res, next) => {
 });
 
 //Return the recipe_Id accroding to user_id
-router.get("/preview/myMeals", async(req, res) => {
+router.get("/preview/myMeals/:meal_id", async(req, res) => {
     const user_ID = req.session.user_id
+    const meal_ID = req.params.meal_id;
     // const result = await DButils.execQuery(
     //     `SELECT meal_id, meal_name FROM meals WHERE user_id = '${user_ID}'`)
     
@@ -458,7 +459,7 @@ router.get("/preview/myMeals", async(req, res) => {
             `select recipe_id from recipesForMeal
             join meals 
             on meals.meal_id = recipesForMeal.meal_id 
-            where meals.user_id = '${user_ID}`)
+            where meals.user_id = '${user_ID} and meals.meal_id = ${meal_ID}`)
     
         if (recipes_ids && recipes_ids.length > 0) {
             const my_recipes_list = []
