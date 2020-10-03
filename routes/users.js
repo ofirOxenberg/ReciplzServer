@@ -23,17 +23,20 @@ router.get("/recipeInfo/:ids", async(req, res) => {
     res.send(userRecipeData);
 });
 
+//get params: mealId
+//return: The meal_name and recipe_id for some meal_id
 router.get("/myMealRecipes/:mealId", async(req, res) => {
     const user_ID = req.session.user_id;;
     const mealId = req.params.mealId;
     const result = await DButils.execQuery(
-        `SELECT meals.meal_name,recipesForMeal.meal_id,recipesForMeal.recipe_id 
+        `SELECT meals.meal_name,recipesForMeal.recipe_id 
         FROM meals JOIN recipesForMeal 
         ON meals.meal_id=recipesForMeal.meal_id
         WHERE meals.meal_id = '${mealId}'`)
     res.send(result);
 });
-
+// get params: recipeId
+//Return the meal flag, if the meal should be marked for in this recipe
 router.get("/getRecipesMealsFlags/:recipeId", async(req, res) => {
     try{
     const user_ID = req.user_id;
@@ -60,6 +63,7 @@ router.get("/getRecipesMealsFlags/:recipeId", async(req, res) => {
 }
 });
 
+//Return the meal_id and meal_name according to user_id
 router.get("/myMeals", async(req, res) => {
     const user_ID = req.user_id;
     const result = await DButils.execQuery(
@@ -130,7 +134,8 @@ router.put("/add_to_favorites/recipeId/:recipeId", async(req, res, next) => {
     }
 });
 
-
+//get params: recipeId, mealId
+//return : id the recipe already exist in this meal
 router.put("/recipesForMeal/recipeId/:recipeId/:mealId", async(req, res, next) => {
     try {
         const user_ID = req.session.user_id;
@@ -146,8 +151,12 @@ router.put("/recipesForMeal/recipeId/:recipeId/:mealId", async(req, res, next) =
             throw { status: 400, message: "recipe not found" }
         
             const resultIfRecipeExistInMeal = await DButils.execQuery( // Verify if the user have this recipe in this meal
-            `SELECT * FROM meals  INNER JOIN recipesForMeal ON meals.meal_id=recipesForMeal.meal_id 
-            WHERE user_id = '${user_ID}' AND recipe_id = '${recipe_ID}' AND meals.meal_id= '${meal_ID}'`)
+            `SELECT * FROM meals  
+            INNER JOIN recipesForMeal 
+            ON meals.meal_id=recipesForMeal.meal_id 
+            WHERE user_id = '${user_ID}' 
+            AND recipe_id = '${recipe_ID}' 
+            AND meals.meal_id= '${meal_ID}'`)
         
             const resultIfUserHaveMeal = await DButils.execQuery(
             `SELECT meal_id FROM meals WHERE user_id = '${user_ID}'`) //Verify if the user have meals 
