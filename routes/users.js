@@ -23,19 +23,23 @@ router.get("/recipeInfo/:ids", async(req, res) => {
     res.send(userRecipeData);
 });
 
-router.get("/myMealsRecipes", async(req, res) => {
-    const user_ID = req.user_id;
+//get params: mealId
+//return: The meal_name and recipe_id for some meal_id
+router.get("/myMealRecipes/:mealId", async(req, res) => {
+    const user_ID = req.session.user_id;;
+    const mealId = req.params.mealId;
     const result = await DButils.execQuery(
-        `SELECT meals.meal_name,recipesForMeal.meal_id,recipesForMeal.recipe_id FROM meals JOIN recipesForMeal ON meals.meal_id=recipesForMeal.meal_id
-        WHERE user_id = '${user_ID}'`)
-        
-
+        `SELECT meals.meal_name,recipesForMeal.recipe_id 
+        FROM meals JOIN recipesForMeal 
+        ON meals.meal_id=recipesForMeal.meal_id
+        WHERE meals.meal_id = '${mealId}'`)
     res.send(result);
 });
-
+// get params: recipeId
+//Return the meal flag, if the meal should be marked for in this recipe
 router.get("/getRecipesMealsFlags/:recipeId", async(req, res) => {
     try{
-    const user_ID = req.user_id;
+    const user_ID = req.session.user_id;
     const recipe_ID = req.params.recipeId;
 
     const meals = await DButils.execQuery(
@@ -59,41 +63,24 @@ router.get("/getRecipesMealsFlags/:recipeId", async(req, res) => {
 }
 });
 
+//Return the meal_name according to user_id
 router.get("/myMeals", async(req, res) => {
-    const user_ID = req.user_id;
-    const result = await DButils.execQuery(
-        `SELECT meal_id, meal_name FROM meals WHERE user_id = '${user_ID}'`)
-
-    res.send(result);
-});
-
-router.get("preview/myMeals", async(req, res) => {
-    const user_ID = req.user_id;
-    const result = await DButils.execQuery(
-        `SELECT meal_id, meal_name FROM meals WHERE user_id = '${user_ID}'`)
-    
-        var ans = {};
-        result.forEach(async(element) => {
-        
-    const recipes_ids = await DButils.execQuery(
-            `SELECT recipe_id FROM recipesForMeal WHERE meal_id = '${element.meal_id}'`)
-    
-        if (recipes_ids && recipes_ids.length > 0) {
-            const my_recipes_list = []
-            recipes_ids.forEach(recipeId => {
-                my_recipes_list.push(recipeId.recipe_id);
-            });
-            search_util.getRecipesInfo(my_recipes_list, true)
-                .then((info_array) => res.send(info_array))
-                .catch((error) => {
-                    res.sendStatus(error.response.status);
-                });
-        }
-    
-        ans[element.meal_name] = {meal_name: element.meal_name, list:my_recipes_list};    
-    });
+    try{
+    const user_ID = req.session.user_id;
+    const meals = await DButils.execQuery(
+        `SELECT meal_name,meal_id FROM meals 
+        WHERE user_id = '${user_ID}'`)
+    var ans = {}
+    meals.forEach(meal => {
+            ans[meal.meal_id] = {name : meal.meal_name, meal_id : meal.meal_id}
+        }); 
     res.send(ans);
+    }catch(error){
+        res.send(error);
+    }
 });
+
+
 
 // help function. checks in the DB.
 async function getUserInfoOnRecipes(user_id, ids) {
@@ -155,7 +142,8 @@ router.put("/add_to_favorites/recipeId/:recipeId", async(req, res, next) => {
     }
 });
 
-
+//get params: recipeId, mealId
+//return : id the recipe already exist in this meal
 router.put("/recipesForMeal/recipeId/:recipeId/:mealId", async(req, res, next) => {
     try {
         const user_ID = req.session.user_id;
@@ -171,8 +159,12 @@ router.put("/recipesForMeal/recipeId/:recipeId/:mealId", async(req, res, next) =
             throw { status: 400, message: "recipe not found" }
         
             const resultIfRecipeExistInMeal = await DButils.execQuery( // Verify if the user have this recipe in this meal
-            `SELECT * FROM meals  INNER JOIN recipesForMeal ON meals.meal_id=recipesForMeal.meal_id 
-            WHERE user_id = '${user_ID}' AND recipe_id = '${recipe_ID}' AND meals.meal_id= '${meal_ID}'`)
+            `SELECT * FROM meals  
+            INNER JOIN recipesForMeal 
+            ON meals.meal_id=recipesForMeal.meal_id 
+            WHERE user_id = '${user_ID}' 
+            AND recipe_id = '${recipe_ID}' 
+            AND meals.meal_id= '${meal_ID}'`)
         
             const resultIfUserHaveMeal = await DButils.execQuery(
             `SELECT meal_id FROM meals WHERE user_id = '${user_ID}'`) //Verify if the user have meals 
@@ -469,6 +461,41 @@ router.get("/fullview/my_favorites", async(req, res, next) => {
         next(error)
     }
 });
+
+//Return the recipe_Id accroding to user_id
+router.get("/preview/myMeals/:meal_id", async(req, res) => {
+    const user_ID = req.session.user_id
+    const meal_ID = req.params.meal_id;
+    // const result = await DButils.execQuery(
+    //     `SELECT meal_id, meal_name FROM meals WHERE user_id = '${user_ID}'`)
+    
+    //     var ans = {};
+    //     result.forEach(async(element) => {
+        
+    const recipes_ids = 
+        await DButils.execQuery(
+            `select recipe_id from recipesForMeal
+            join meals 
+            on meals.meal_id = recipesForMeal.meal_id 
+            where meals.user_id = '${user_ID}' and meals.meal_id = '${meal_ID}'`)
+    
+        if (recipes_ids && recipes_ids.length > 0) {
+            const my_recipes_list = []
+            recipes_ids.forEach(recipeId => {
+                my_recipes_list.push(recipeId.recipe_id);
+            });
+            search_util.getRecipesInfo(my_recipes_list, true)
+                .then((info_array) => res.send(info_array))
+                .catch((error) => {
+                    res.sendStatus(error.response.status);
+                });
+        }
+    
+        //ans[element.meal_name] = {meal_name: element.meal_name, list:my_recipes_list};    
+    //});
+    //res.send(ans);
+});
+
 
 // returns preview of all favorites recipes of the user from the API spooncular!.
 router.get("/preview/my_favorites", async(req, res, next) => {
