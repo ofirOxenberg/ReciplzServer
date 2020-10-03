@@ -65,7 +65,7 @@ router.get("/getRecipesMealsFlags/:recipeId", async(req, res) => {
 
 //Return the meal_id and meal_name according to user_id
 router.get("/myMeals", async(req, res) => {
-    const user_ID = req.user_id;
+    const user_ID = req.session.user_id;
     const result = await DButils.execQuery(
         `SELECT meal_id, meal_name FROM meals WHERE user_id = '${user_ID}'`)
 
