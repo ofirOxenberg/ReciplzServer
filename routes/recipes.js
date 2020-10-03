@@ -67,4 +67,16 @@ router.get("/fullview/recipeId/:recipeId", (req, res) => {
         });
 });
 
+router.get("/calcPreparationTime/recipeId/:recipeId", (req, res) => {
+    const { recipeId } = req.params;
+    search_params = {};
+    search_params.recipeId = recipeId;
+
+    search_util.getAllTimsOfRecipes(search_params)
+        .then((info_array) => res.send(info_array))
+        .catch((error) => {
+            res.sendStatus(error.response.status);
+        });
+});
+
 module.exports = router;

@@ -20,6 +20,36 @@ async function getRecipesInfo(recipes_id_list, preview) {
     return extractRelvantRecipesDataFullview(info_response);
 }
 
+function extractReadyInMinutes(recipes_info){
+    var counter = 0;
+    recipes_info.map((recipe_info) => {
+        const {
+            readyInMinutes,
+        } = recipe_info.data;
+
+        var content = {
+            readyInMinutes: readyInMinutes,
+        };
+        recipes_info[counter] = content;
+        counter++;
+    });
+
+    return recipes_info;
+}
+
+async function getAllTimsOfRecipes(search_params) {
+    let id = search_params.recipeId;
+    recipes_id_list = [];
+    recipes_id_list.push(id)
+    let promises = [];
+    recipes_id_list.map((id) =>
+        promises.push(axios.get(`${recipes_api}/${id}/information?${api_key}`))
+    );
+    let info_response = await Promise.all(promises);
+    var theResult = extractReadyInMinutes(info_response);
+    return theResult;
+}
+
 // this function extract the recipe data for full view 
 function extractRelvantRecipesDataFullview(recipes_info) {
 
@@ -219,6 +249,7 @@ async function getFullviewForRecipe(search_params) {
     return theResult;
 }
 
+exports.getAllTimsOfRecipes = getAllTimsOfRecipes;
 exports.extractQueriesParams = extractQueriesParams;
 exports.searchForRecipes = searchForRecipes;
 exports.getRecipesInfo = getRecipesInfo;

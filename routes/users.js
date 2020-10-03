@@ -207,7 +207,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
             `INSERT INTO MyRecipes VALUES (user_ID,default,[{default, '${username}'
             , '${recipeName}', '${image}', '${instruction}'}])`
         );
-        res.status(201).send({ message: "user created", success: true });
+        res.status(201).send({ message: "recipe created", success: true });
     } catch (error) {
         next(error);
     }
