@@ -198,16 +198,26 @@ router.put("/recipesForMeal/recipeId/:recipeId/:mealId", async(req, res, next) =
 });
 
 router.put("/add_new_recipe", async(req, res, next) => {
-    try{
-        const recipe_name = await DButils.execQuery("SELECT recipe_name FROM MyRecipes");
-        if (recipe_name.find((x) => x.recipe_name === req.body.recipe_name)){
-            throw { status: 409, message: "Recipe name taken" }
-        }
+    try {
+        const user_ID = req.session.user_id;
+        const result = await DButils.execQuery("SELECT details FROM MyRecipes");
+        result.forEach(async(det) => {
+            if (det.find((x) => x.recipe_name.equals(req.body.recipeName))){
+                throw { status: 409, message: "You already have a recipe name with that name, please choose a different one" };
+            }
+        });
+        let image= req.body.image;
+        let username= req.body.username;
+        let recipeName= req.body.recipeName;
+        let instruction= req.body.instruction;
 
-        
-    }
-    catch{
-
+        await DButils.execQuery(
+            `INSERT INTO MyRecipes VALUES (user_ID,default,[{default, '${username}'
+            , '${recipeName}', '${image}', '${instruction}'}])`
+        );
+        res.status(201).send({ message: "user created", success: true });
+    } catch (error) {
+        next(error);
     }
 });
 
