@@ -201,7 +201,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
         });
         const username = await DButils.execQuery(
             `SELECT username FROM users WHERE user_id='${user_ID}'`
-            );
+        );
         await DButils.execQuery(
             `INSERT INTO MyRecipes(user_id,recipe_id)VALUES('${user_ID}',default)`
         );
@@ -210,7 +210,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
         );
         var instruction = new Object();
         instruction.step= "1";
-        instruction.ins= req.body.instruction;
+        instruction.instruction= req.body.instruction;
 
         //var instructionString = JSON.stringify(instruction);
 
@@ -221,14 +221,14 @@ router.put("/add_new_recipe", async(req, res, next) => {
         //var ingredientsString = JSON.stringify(ingredients);
 
         var recipe = new Object();
-        recipe.recipe_id= recipe_id;
-        recipe.image= req.body.image;
+        recipe.recipe_id= recipe_id.recipe_id.recipe_id;
         recipe.author_username= username;
         recipe.recipe_name= req.body.recipeName;
-        recipe.instructions= instruction;
-        recipe.ingredients= ingredients;
+        recipe.image= req.body.image;
         recipe.ready_in_minutes= req.body.ready_in_minutes;
         recipe.amount_of_servings= req.body.serving;
+        recipe.ingredients= ingredients;
+        recipe.instructions= instruction;
 
         var recipeString = JSON.stringify(recipe);
 
