@@ -195,18 +195,36 @@ router.put("/add_new_recipe", async(req, res, next) => {
         const result = await DButils.execQuery("SELECT details FROM MyRecipes");
         result.forEach(async(det) => {
             if (det.find((x) => x.recipe_name.equals(req.body.recipeName))){
+                next(error)
                 throw { status: 409, message: "You already have a recipe name with that name, please choose a different one" };
             }
         });
-        let image= req.body.image;
-        let username= req.body.username;
-        let recipeName= req.body.recipeName;
-        let instruction= req.body.instruction;
-        let ready_in_minutes= req.body.ready_in_minutes;
+        var instruction = new Object();
+        instruction.step= "1";
+        instruction.ins= req.body.instruction;
+
+        var instructionString = json.stringify(instruction);
+
+        var ingredients = new Object();
+        ingredients.name= req.body.ingredients;
+        ingredients.amount= null;
+
+        var ingredientsString = json.stringify(ingredients);
+
+        var recipe = new Object();
+        recipe.recipe_id= 1000000000007;
+        recipe.image= req.body.image;
+        recipe.author_username= req.body.username;
+        recipe.recipe_name= req.body.recipeName;
+        recipe.instructions= instructionString;
+        recipe.ingredients= ingredientsString;
+        recipe.ready_in_minutes= req.body.ready_in_minutes;
+        recipe.amount_of_servings= req.body.serving;
+
+        var recipeString = json.stringify(recipe);
 
         await DButils.execQuery(
-            `INSERT INTO MyRecipes VALUES (user_ID,default,[{default, '${username}'
-            , '${recipeName}', '${image}','${ready_in_minutes}', '${instruction}'}])`
+            `INSERT INTO MyRecipes VALUES (${user_ID},'1000000000007',${recipeString})`
         );
         res.status(201).send({ message: "recipe created", success: true });
     } catch (error) {
