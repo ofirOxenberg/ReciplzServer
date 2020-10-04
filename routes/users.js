@@ -205,6 +205,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
         const recipe_id = await DButils.execQuery(
             `SELECT recipe_id FROM MyRecipes WHERE details is null`
         );
+        res.status(201).send({ message: recipe_id, success: true });
         var instruction = new Object();
         instruction.step= "1";
         instruction.ins= req.body.instruction;
@@ -218,7 +219,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
         var ingredientsString = JSON.stringify(ingredients);
 
         var recipe = new Object();
-        //recipe.recipe_id= recipe_id;
+        recipe.recipe_id= recipe_id.recipe_id;
         recipe.image= req.body.image;
         recipe.author_username= req.body.username;
         recipe.recipe_name= req.body.recipeName;
