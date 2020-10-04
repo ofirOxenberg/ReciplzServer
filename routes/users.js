@@ -209,13 +209,13 @@ router.put("/add_new_recipe", async(req, res, next) => {
         instruction.step= "1";
         instruction.ins= req.body.instruction;
 
-        var instructionString = json.stringify(instruction);
+        var instructionString = JSON.stringify(instruction);
 
         var ingredients = new Object();
         ingredients.name= req.body.ingredients;
         ingredients.amount= null;
 
-        var ingredientsString = json.stringify(ingredients);
+        var ingredientsString = JSON.stringify(ingredients);
 
         var recipe = new Object();
         recipe.recipe_id= recipe_id;
@@ -227,7 +227,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
         recipe.ready_in_minutes= req.body.ready_in_minutes;
         recipe.amount_of_servings= req.body.serving;
 
-        var recipeString = json.stringify(recipe);
+        var recipeString = JSON.stringify(recipe);
 
         await DButils.execQuery(
             `UPDATE MyRecipes set details='${recipeString}' WHERE recipe_id='${recipe_id}'`
