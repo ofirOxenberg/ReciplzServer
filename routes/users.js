@@ -232,7 +232,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
         await DButils.execQuery(
             `UPDATE MyRecipes set details='${recipeString}' WHERE recipe_id='${recipe_id}'`
         );
-        res.status(201).send({ message: "recipe created", success: true });
+        res.status(201).send({ message: recipeString, success: true });
     } catch (error) {
         next(error);
     }
