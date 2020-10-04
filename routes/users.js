@@ -209,21 +209,21 @@ router.put("/add_new_recipe", async(req, res, next) => {
         instruction.step= "1";
         instruction.ins= req.body.instruction;
 
-        var instructionString = JSON.stringify(instruction);
+        //var instructionString = JSON.stringify(instruction);
 
         var ingredients = new Object();
         ingredients.name= req.body.ingredients;
         ingredients.amount= null;
 
-        var ingredientsString = JSON.stringify(ingredients);
+        //var ingredientsString = JSON.stringify(ingredients);
 
         var recipe = new Object();
         recipe.recipe_id= recipe_id.recipe_id;
         recipe.image= req.body.image;
         recipe.author_username= req.body.username;
         recipe.recipe_name= req.body.recipeName;
-        recipe.instructions= instructionString;
-        recipe.ingredients= ingredientsString;
+        recipe.instructions= instruction;
+        recipe.ingredients= ingredients;
         recipe.ready_in_minutes= req.body.ready_in_minutes;
         recipe.amount_of_servings= req.body.serving;
 
@@ -232,7 +232,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
         await DButils.execQuery(
             `UPDATE MyRecipes set details='${recipeString}' WHERE recipe_id='${recipe.recipe_id}'`
         );
-        res.status(201).send({ message: recipe.recipe_id, success: true });
+        res.status(201).send({ message: recipe_id.recipe_id, success: true });
         //res.status(201).send({ message: "recipe was add Successfully", success: true });
     } catch (error) {
         next(error);
