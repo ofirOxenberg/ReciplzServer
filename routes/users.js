@@ -217,8 +217,10 @@ router.put("/add_new_recipe", async(req, res, next) => {
 
         //var ingredientsString = JSON.stringify(ingredients);
 
+        var recipe_id_test= recipe_id.recipe_id;
+
         var recipe = new Object();
-        recipe.recipe_id= recipe_id.recipe_id;
+        recipe.recipe_id= recipe_id;
         recipe.image= req.body.image;
         recipe.author_username= req.body.username;
         recipe.recipe_name= req.body.recipeName;
@@ -233,6 +235,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
             `UPDATE MyRecipes set details='${recipeString}' WHERE recipe_id='${recipe.recipe_id}'`
         );
         res.status(201).send({ message: recipeString, success: true });
+        res.status(201).send({ message: recipe_id_test, success: true });
         //res.status(201).send({ message: "recipe was added Successfully", success: true });
     } catch (error) {
         next(error);
