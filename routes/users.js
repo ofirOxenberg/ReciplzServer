@@ -199,6 +199,9 @@ router.put("/add_new_recipe", async(req, res, next) => {
                 throw { status: 409, message: "You already have a recipe name with that name, please choose a different one" };
             }
         });
+        const username = await DButils.execQuery(
+            `SELECT username FROM users WHERE user_id='${user_ID}'`
+            );
         await DButils.execQuery(
             `INSERT INTO MyRecipes(user_id,recipe_id)VALUES('${user_ID}',default)`
         );
@@ -217,12 +220,10 @@ router.put("/add_new_recipe", async(req, res, next) => {
 
         //var ingredientsString = JSON.stringify(ingredients);
 
-        var recipe_id_test= recipe_id.recipe_id;
-
         var recipe = new Object();
         recipe.recipe_id= recipe_id;
         recipe.image= req.body.image;
-        recipe.author_username= req.body.username;
+        recipe.author_username= username;
         recipe.recipe_name= req.body.recipeName;
         recipe.instructions= instruction;
         recipe.ingredients= ingredients;
@@ -232,10 +233,9 @@ router.put("/add_new_recipe", async(req, res, next) => {
         var recipeString = JSON.stringify(recipe);
 
         await DButils.execQuery(
-            `UPDATE MyRecipes set details='${recipeString}' WHERE recipe_id='${recipe.recipe_id}'`
+            `UPDATE MyRecipes set details='${recipeString}' WHERE recipe_id='${recipe_id}'`
         );
         res.status(201).send({ message: recipeString, success: true });
-        res.status(201).send({ message: recipe_id_test, success: true });
         //res.status(201).send({ message: "recipe was added Successfully", success: true });
     } catch (error) {
         next(error);
