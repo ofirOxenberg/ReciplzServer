@@ -193,12 +193,12 @@ router.put("/add_new_recipe", async(req, res, next) => {
     try {
         const user_ID = req.session.user_id;
         const result = await DButils.execQuery("SELECT details FROM MyRecipes");
-        if(result.find((x) => {
-            var recpies = JSON.parse(x); 
-            return recpies.find(
-                (recipe) => recipe.recipe_name=== req.body.recipeName)})){
-                    return res.status(409).send({ message: "You already have a recipe name with that name, please choose a different one", success: false });
-                }
+        // if(result.find((x) => {
+        //     var recpies = JSON.parse(x); 
+        //     return recpies.find(
+        //         (recipe) => recipe.recipe_name=== req.body.recipeName)})){
+        //             return res.status(409).send({ message: "You already have a recipe name with that name, please choose a different one", success: false });
+        //         }
         const username = await DButils.execQuery(
             `SELECT username FROM users WHERE user_id='${user_ID}'`
         );
