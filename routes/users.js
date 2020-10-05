@@ -239,13 +239,15 @@ router.put("/add_new_recipe", async(req, res, next) => {
         recipe.ingredients= ingredientsArray;
         recipe.instructions= instructionArray;
 
-        var recipeString = JSON.stringify(recipe);
+        //var recipeString = JSON.stringify(recipe);
 
         const recipeArray = [];
-        recipeArray[0] = recipeString;
+        recipeArray[0] = recipe;
+
+        var arryString = JSON.stringify(recipeArray);
 
         await DButils.execQuery(
-            `UPDATE MyRecipes set details='${recipeArray}' WHERE recipe_id='${recipe_id_object[0]}'`
+            `UPDATE MyRecipes set details='${arryString}' WHERE recipe_id='${recipe_id_object[0]}'`
         );
         res.status(201).send({ message: recipeArray, success: true });
         //res.status(201).send({ message: "recipe was added Successfully", success: true });
