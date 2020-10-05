@@ -223,6 +223,9 @@ router.put("/add_new_recipe", async(req, res, next) => {
         ingredients.name= req.body.ingredients;
         ingredients.amount= null;
 
+        const ingredientsArray = [];
+        ingredientsArray[0] = ingredients;
+
         var recipe = new Object();
         recipe.recipe_id= recipe_id_object[0];
         recipe.author_username= username_object[0];
@@ -230,7 +233,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
         recipe.image= req.body.image;
         recipe.ready_in_minutes= req.body.ready_in_minutes;
         recipe.amount_of_servings= req.body.serving;
-        recipe.ingredients= ingredients;
+        recipe.ingredients= ingredientsArray[0];
         recipe.instructions= instruction;
 
         var recipeString = JSON.stringify(recipe);
