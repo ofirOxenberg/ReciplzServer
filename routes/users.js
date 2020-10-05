@@ -200,8 +200,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
             }
         });
         if (isEqual) {
-            next(error)
-            res.status(409).send({ message: "You already have a recipe name with that name, please choose a different one", success: false });
+            return res.status(409).send({ message: "You already have a recipe name with that name, please choose a different one", success: false });
         } 
         const username = await DButils.execQuery(
             `SELECT username FROM users WHERE user_id='${user_ID}'`
