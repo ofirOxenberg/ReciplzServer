@@ -239,10 +239,10 @@ router.put("/add_new_recipe", async(req, res, next) => {
         recipe.ingredients= ingredientsArray;
         recipe.instructions= instructionArray;
 
-        var recipeString = JSON.stringify(recipe);
+        //var recipeString = JSON.stringify(recipe);
 
         const recipeArray = [];
-        recipeArray[0] = recipeString;
+        recipeArray[0] = recipe;
 
         await DButils.execQuery(
             `UPDATE MyRecipes set details='${recipeArray}' WHERE recipe_id='${recipe_id_object[0]}'`
