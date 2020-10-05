@@ -233,7 +233,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
         recipe.image= req.body.image;
         recipe.ready_in_minutes= req.body.ready_in_minutes;
         recipe.amount_of_servings= req.body.serving;
-        recipe.ingredients= ingredientsArray[0];
+        recipe.ingredients= ingredientsArray;
         recipe.instructions= instruction;
 
         var recipeString = JSON.stringify(recipe);
