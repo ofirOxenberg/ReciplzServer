@@ -196,7 +196,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
         result.forEach(async(det) => {
             if (det.find((x) => x.recipe_name.equals(req.body.recipeName))){
                 next(error)
-                throw { status: 409, message: "You already have a recipe name with that name, please choose a different one" };
+                res.status(409).send({ message: "You already have a recipe name with that name, please choose a different one", success: false });
             }
         });
         const username = await DButils.execQuery(
