@@ -208,7 +208,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
         const recipe_id = await DButils.execQuery(
             `SELECT recipe_id FROM MyRecipes WHERE details is null`
         );
-        let recipeID = JSON.parse(recipe_id[0].recipe_id);
+        let recipeID = JSON.parse(recipe_id);
 
         var instruction = new Object();
         instruction.step= "1";
