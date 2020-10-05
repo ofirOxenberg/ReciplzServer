@@ -235,7 +235,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
         var recipeString = JSON.stringify(recipe);
 
         await DButils.execQuery(
-            `UPDATE MyRecipes set details='${recipeString}' WHERE recipe_id='${recipe_id}'`
+            `UPDATE MyRecipes set details='${recipeString}' WHERE recipe_id='${recipe.recipe_id}'`
         );
         res.status(201).send({ message: recipeString, success: true });
         //res.status(201).send({ message: "recipe was added Successfully", success: true });
