@@ -195,7 +195,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
         const result = await DButils.execQuery("SELECT details FROM MyRecipes");
         var isEqual= false;
         result.forEach(async(det) => {
-            if (det.find((x) => x.recipe_name.equals(req.body.recipeName))){
+            if (det.find((x) => x.recipe_name===req.body.recipeName)){
                 isEqual= true;
             }
         });
