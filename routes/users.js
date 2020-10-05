@@ -202,6 +202,9 @@ router.put("/add_new_recipe", async(req, res, next) => {
         const username = await DButils.execQuery(
             `SELECT username FROM users WHERE user_id='${user_ID}'`
         );
+        var username_object = username.map(function(username){
+            return username['username'];
+        });
         await DButils.execQuery(
             `INSERT INTO MyRecipes(user_id,recipe_id)VALUES('${user_ID}',default)`
         );
@@ -221,8 +224,8 @@ router.put("/add_new_recipe", async(req, res, next) => {
         ingredients.amount= null;
 
         var recipe = new Object();
-        recipe.recipe_id= recipe_id;
-        recipe.author_username= username;
+        recipe.recipe_id= recipe_id_object[0];
+        recipe.author_username= username_object[0];
         recipe.recipe_name= req.body.recipeName;
         recipe.image= req.body.image;
         recipe.ready_in_minutes= req.body.ready_in_minutes;
@@ -235,7 +238,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
         await DButils.execQuery(
             `UPDATE MyRecipes set details='${recipeString}' WHERE recipe_id='${recipe_id}'`
         );
-        res.status(201).send({ message: recipe_id_object[0], success: true });
+        res.status(201).send({ message: recipeString, success: true });
         //res.status(201).send({ message: "recipe was added Successfully", success: true });
     } catch (error) {
         next(error);
