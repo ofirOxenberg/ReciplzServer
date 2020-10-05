@@ -193,12 +193,16 @@ router.put("/add_new_recipe", async(req, res, next) => {
     try {
         const user_ID = req.session.user_id;
         const result = await DButils.execQuery("SELECT details FROM MyRecipes");
+        var isEqual= false;
         result.forEach(async(det) => {
             if (det.find((x) => x.recipe_name.equals(req.body.recipeName))){
-                next(error)
-                res.status(409).send({ message: "You already have a recipe name with that name, please choose a different one", success: false });
+                isEqual= true;
             }
         });
+        if (isEqual) {
+            next(error)
+            res.status(409).send({ message: "You already have a recipe name with that name, please choose a different one", success: false });
+        } 
         const username = await DButils.execQuery(
             `SELECT username FROM users WHERE user_id='${user_ID}'`
         );
@@ -249,8 +253,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
         await DButils.execQuery(
             `UPDATE MyRecipes set details='${arryString}' WHERE recipe_id='${recipe_id_object[0]}'`
         );
-        res.status(201).send({ message: recipeArray, success: true });
-        //res.status(201).send({ message: "recipe was added Successfully", success: true });
+        res.status(201).send({ message: "recipe was added Successfully", success: true });
     } catch (error) {
         next(error);
     }
