@@ -205,10 +205,10 @@ router.put("/add_new_recipe", async(req, res, next) => {
         await DButils.execQuery(
             `INSERT INTO MyRecipes(user_id,recipe_id)VALUES('${user_ID}',default)`
         );
-        const recipe_id = await DButils.execQuery(
+        const recipe_id_Array = await DButils.execQuery(
             `SELECT recipe_id FROM MyRecipes WHERE details is null`
         );
-        let recipeID = JSON.stringify(recipe_id);
+        var recipeID_object = recipe_id_Array[0];
 
         var instruction = new Object();
         instruction.step= "1";
@@ -223,7 +223,7 @@ router.put("/add_new_recipe", async(req, res, next) => {
         //var ingredientsString = JSON.stringify(ingredients);
 
         var recipe = new Object();
-        recipe.recipe_id= recipeID;
+        recipe.recipe_id= recipeID_object;
         recipe.author_username= username;
         recipe.recipe_name= req.body.recipeName;
         recipe.image= req.body.image;
