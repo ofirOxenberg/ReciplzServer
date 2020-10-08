@@ -15,13 +15,16 @@ router.get("/search/query/:searchQuery/amount/:num",
         search_params.query = searchQuery;
         search_params.number = num;
         search_params.instructionsRequired = true;
+        if(searchQuery == null){
         search_util.extractQueriesParams(req.query, search_params);
+        }
         search_util.searchForRecipes(search_params)
             .then((info_array) => res.send(info_array))
             .catch((error) => {
                 res.sendStatus(error.response.status);
             });
     });
+
 
 // this function returns 3 random recipes who have instructions!
 router.get("/randomRecipes", async(req, res, next) => {
