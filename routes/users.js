@@ -152,11 +152,11 @@ router.put("/recipesForMeal/recipeId/:recipeId/:mealId", async(req, res, next) =
 
         //res.status(200).send({ message: "almoggg." })
 
-        const recipe =
-            await search_util.getRecipesInfo([recipe_ID], false)
+        // const recipe =
+        //     await search_util.getRecipesInfo([recipe_ID], false)
 
-        if (!recipe)
-            throw { status: 400, message: "recipe not found" }
+        // if (!recipe)
+        //     throw { status: 400, message: "recipe not found" }
         
             const resultIfRecipeExistInMeal = await DButils.execQuery( // Verify if the user have this recipe in this meal
             `SELECT * FROM meals  
@@ -177,7 +177,7 @@ router.put("/recipesForMeal/recipeId/:recipeId/:mealId", async(req, res, next) =
         {
             await DButils.execQuery( //adds recipe to meal
                 `INSERT INTO recipesForMeal VALUES ('${meal_ID}','${recipe_ID}')`)
-            
+
             res.status(200).send({ message: "saved to your next meal successfully." })
         }
         else if( resultIfUserHaveMeal.length>0 & !(resultIfRecipeExistInMeal==0))
