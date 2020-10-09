@@ -5,8 +5,7 @@ const search_util = require("./utils/search_recipes");
 
 // this functions gets all the recipes info by search query and number of 
 // recipes required - 5 10 or 15, the default is 5
-//router.get("/search/query/:searchQuery/amount/:num",
-router.get("/search/query/amount/:num",
+router.get("/search/query/:searchQuery/amount/:num",
     (req, res) => {
         var { searchQuery, num } = req.params;
         if (num != 5 && num != 10 && num != 15) {
