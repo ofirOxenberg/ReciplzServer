@@ -572,7 +572,7 @@ router.get("/preview/myMeals/:meal_id", async (req, res) => {
     try {
         var recipes_ids =
             await DButils.execQuery(
-                `select recipe_id from recipesForMeal
+        `select recipesForMeal.recipe_id,MyRecipes.details from recipesForMeal
         join meals 
         on meals.meal_id = recipesForMeal.meal_id 
         left join MyRecipes
