@@ -18,7 +18,7 @@ router.post("/Register", async(req, res, next) => {
             throw { status: 409, message: "Username is taken" };
         // add the new username
         const emails = await DButils.execQuery("SELECT email FROM users");
-        if (emails.find((x) => x.emails === req.body.emails))
+        if (emails.find((x) => x.email === req.body.email))
             throw { status: 409, message: "email is taken" };
         let hash_password = bcrypt.hashSync(
             req.body.password,
