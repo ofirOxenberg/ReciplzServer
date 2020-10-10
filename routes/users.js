@@ -94,7 +94,6 @@ router.get("/myMeals", async(req, res) => {
 });
 
 
-
 // help function. checks in the DB.
 async function getUserInfoOnRecipes(user_id, ids) {
     const userRecipesData = {};
@@ -154,6 +153,35 @@ router.put("/add_to_favorites/recipeId/:recipeId", async(req, res, next) => {
         next(error)
     }
 });
+
+
+router.put("/remove_from_favorites/recipeId/:recipeId", async(req, res, next) => {
+    try {
+
+        const user_ID = req.session.user_id;
+        const recipe_ID = req.params.recipeId;
+
+        const recipe =
+            await search_util.getRecipesInfo([recipe_ID], false)
+
+        if (!recipe)
+            throw { status: 400, message: "recipe not found" }
+        const result = await DButils.execQuery(
+            `SELECT * FROM user_favorites WHERE user_id = '${user_ID}' AND recipe_id = '${recipe_ID}'`)
+
+        if (result.length == 0) { 
+            throw { status: 408, message: "recipe is not in favorites." }
+
+        } else
+            await DButils.execQuery( //remove recipe from favorite
+                `DELETE FROM user_favorites WHERE user_id = '${user_ID}' AND recipe_id = '${recipe_ID}'`)
+        res.status(200).send({ message: "removed from favorites recipes successfully." })
+    } catch (error) {
+        next(error)
+    }
+});
+
+
 
 //get params: recipeId, mealId
 //return : id the recipe already exist in this meal
