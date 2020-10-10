@@ -73,7 +73,9 @@ app.use(auth);
 
 //defualt !! 
 app.use((req, res) => {
-    res.sendStatus(404);
+    res.status(404).json({
+        message: 'not found'
+    });
 });
 
 app.use(function(err, req, res, next) {
