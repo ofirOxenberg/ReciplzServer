@@ -211,7 +211,7 @@ router.put("/delete_meal/:mealId", async(req, res, next) => {
         await DButils.execQuery(
             `DELETE FROM meals WHERE meal_id='${meal_ID}'`)
 
-        const resdeleteRecipes = await DButils.execQuery(
+        await DButils.execQuery(
             `DELETE FROM recipesForMeal WHERE meal_id='${meal_ID}'`)
         
         res.status(201).send({ message: "Meal was deleted successfully", success: true });
