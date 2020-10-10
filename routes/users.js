@@ -205,7 +205,7 @@ router.put("/remove_from_favorites/recipeId/:recipeId", async (req, res, next) =
     }
 });
 
-router.put("/delete_meal/:mealId", async(req, res, next) => {
+router.get("/delete_meal/:mealId", async(req, res, next) => {
     try {
         const meal_ID = req.params.mealId;
         await DButils.execQuery(
@@ -220,7 +220,21 @@ router.put("/delete_meal/:mealId", async(req, res, next) => {
     }
 });
 
-router.put("/delete_recipe/:recipeId", async(req, res, next) => {
+router.get("/deleteRecipeFromMeal/:mealId/:recipeId", async(req, res, next) => {
+    try {
+        const meal_ID = req.params.mealId;
+        const recipe_ID = req.params.recipeId;
+
+        await DButils.execQuery(
+            `DELETE FROM recipesForMeal WHERE meal_id='${meal_ID}' AND recipe_id='${recipe_ID}'`)
+        
+        res.status(201).send({ message: "Recipe was deleted from the meal", success: true });
+    }catch (error) {
+        next(error)
+    }
+});
+
+router.get("/delete_recipe/:recipeId", async(req, res, next) => {
     try {
         const recipe_ID = req.params.recipeId;
         await DButils.execQuery(
