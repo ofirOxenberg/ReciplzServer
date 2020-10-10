@@ -581,13 +581,13 @@ router.get("/preview/myMeals/:meal_id", async (req, res) => {
         and meals.meal_id = '${meal_ID}'`)
 
         if (recipes_ids && recipes_ids.length > 0) {
-            const my_recipes_list = []
+            var my_recipes_list = []
             recipes_ids.forEach(recipeId => {
                 my_recipes_list.push(recipeId.recipe_id);
             });
-            var fromApi = my_recipes_list.filter(recipe => !isNaN(Boolean(recipe)))
+            var fromApi = my_recipes_list.filter(recipe => !isNaN(Number(recipe)))
 
-            var notFromApi = recipes_ids.filter(recipe => isNaN(Boolean(recipe.recipe_id)))
+            var notFromApi = recipes_ids.filter(recipe => isNaN(Number(recipe.recipe_id)))
             notFromApi = notFromApi.map((recipe) => {
                 let recipeTestDetails = JSON.parse(recipe.details);
                 return recipeTestDetails
@@ -596,7 +596,7 @@ router.get("/preview/myMeals/:meal_id", async (req, res) => {
             search_util.getRecipesInfo(fromApi, true)
                 .then((info_array) => res.send([...info_array, ...notFromApi]))
                 .catch((error) => {
-                    res.status(444).json({ recipes_ids,notFromApi,fromApi, error, m: error.message })
+                    res.status(444).json({ my_recipes_list,recipes_ids,notFromApi,fromApi, error, m: error.message })
                     res.sendStatus(error.response.status);
                 });
         } else {
