@@ -161,20 +161,19 @@ router.put("/remove_from_favorites/recipeId/:recipeId", async(req, res, next) =>
         const user_ID = req.session.user_id;
         const recipe_ID = req.params.recipeId;
 
-        const recipe =
-            await search_util.getRecipesInfo([recipe_ID], false)
-
-        if (!recipe)
-            throw { status: 400, message: "recipe not found" }
         const result = await DButils.execQuery(
-            `SELECT * FROM user_favorites WHERE user_id = '${user_ID}' AND recipe_id = '${recipe_ID}'`)
+            `SELECT * FROM user_favorites
+            WHERE user_id = '${user_ID}' 
+            AND recipe_id = '${recipe_ID}'`)
 
         if (result.length == 0) { 
             throw { status: 408, message: "recipe is not in favorites." }
 
         } else
             await DButils.execQuery( //remove recipe from favorite
-                `DELETE FROM user_favorites WHERE user_id = '${user_ID}' AND recipe_id = '${recipe_ID}'`)
+                `DELETE FROM user_favorites 
+                WHERE user_id = '${user_ID}' 
+                AND recipe_id = '${recipe_ID}'`)
         res.status(200).send({ message: "removed from favorites recipes successfully." })
     } catch (error) {
         next(error)
