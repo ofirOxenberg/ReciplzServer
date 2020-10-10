@@ -573,19 +573,28 @@ router.get("/preview/myMeals/:meal_id", async(req, res) => {
     //     var ans = {};
     //     result.forEach(async(element) => {
         
-    const recipes_ids = await DButils.execQuery(
-        `select recipe_id from recipesForMeal
-        join meals 
-        on meals.meal_id = recipesForMeal.meal_id 
-        where meals.user_id = '${user_ID}' and meals.meal_id = '${meal_ID}'`)
+    const recipes_ids = 
+        await DButils.execQuery(
+            `select recipe_id from recipesForMeal
+            join meals 
+            on meals.meal_id = recipesForMeal.meal_id 
+            where meals.user_id = '${user_ID}' 
+            and meals.meal_id = '${meal_ID}'`)
     
         if (recipes_ids && recipes_ids.length > 0) {
             const my_recipes_list = []
             recipes_ids.forEach(recipeId => {
                 my_recipes_list.push(recipeId.recipe_id);
             });
-            search_util.getRecipesInfo(my_recipes_list, true)
-                .then((info_array) => res.send(info_array))
+            let fromApi = my_recipes_list.filter(recipe => !isNaN(Boolean(recipe)))
+            let notFromApi = my_recipes_list.filter(recipe => isNaN(Boolean(recipe)))
+            notFromApi = notFromApi.map((recipe) => {
+                let recipeTestDetails = JSON.parse(recipe.details);
+                return recipeTestDetails
+            })
+
+            search_util.getRecipesInfo(fromApi, true)
+                .then((info_array) => res.send([...info_array,...notFromApi]))
                 .catch((error) => {
                     res.sendStatus(error.response.status);
                 });
