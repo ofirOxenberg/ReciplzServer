@@ -205,7 +205,32 @@ router.put("/remove_from_favorites/recipeId/:recipeId", async(req, res, next) =>
     }
 });
 
+router.put("/delete_meal/:mealId", async(req, res, next) => {
+    try {
+        const meal_ID = req.params.mealId;
+        await DButils.execQuery(
+            `DELETE FROM meals WHERE meal_id='${meal_ID}'`)
 
+        const resdeleteRecipes = await DButils.execQuery(
+            `DELETE FROM recipesForMeal WHERE meal_id='${meal_ID}'`)
+        
+        res.status(201).send({ message: "Meal was deleted successfully", success: true });
+    }catch (error) {
+        next(error)
+    }
+});
+
+router.put("/delete_recipe/:recipeId", async(req, res, next) => {
+    try {
+        const recipe_ID = req.params.recipeId;
+        await DButils.execQuery(
+            `DELETE FROM MyRecipes WHERE recipe_id='${recipe_ID}'`)
+
+        res.status(201).send({ message: "Recipe was deleted successfully", success: true });
+    }catch (error) {
+        next(error)
+    }
+});
 
 //get params: recipeId, mealId
 //return : id the recipe already exist in this meal
