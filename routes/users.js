@@ -596,12 +596,15 @@ router.get("/preview/myMeals/:meal_id", async (req, res) => {
             search_util.getRecipesInfo(fromApi, true)
                 .then((info_array) => res.send([...info_array, ...notFromApi]))
                 .catch((error) => {
-
+                    res.status(444).json({recipes_ids})
                     res.sendStatus(error.response.status);
                 });
+        }else {
+            res.status(443).json(recipes_ids)
         }
     } catch (err) {
         res.json({
+            err: err,
             message: err.message,
             recipes_ids
         })
