@@ -179,7 +179,7 @@ router.put("/add_to_favorites/recipeId/:recipeId", async(req, res, next) => {
     }
 });
 
-// users/remove_from_favorites/recipeId/658180
+
 router.put("/remove_from_favorites/recipeId/:recipeId", async(req, res, next) => {
     try {
 
@@ -258,12 +258,6 @@ router.put("/add_new_recipe", async(req, res, next) => {
     try {
         const user_ID = req.session.user_id;
         const result = await DButils.execQuery("SELECT details FROM MyRecipes");
-        // if(result.find((x) => {
-        //     var recpies = JSON.parse(x); 
-        //     return recpies.find(
-        //         (recipe) => recipe.recipe_name=== req.body.recipeName)})){
-        //             return res.status(409).send({ message: "You already have a recipe name with that name, please choose a different one", success: false });
-        //         }
         const username = await DButils.execQuery(
             `SELECT username FROM users WHERE user_id='${user_ID}'`
         );
@@ -579,12 +573,11 @@ router.get("/preview/myMeals/:meal_id", async(req, res) => {
     //     var ans = {};
     //     result.forEach(async(element) => {
         
-    const recipes_ids = 
-        await DButils.execQuery(
-            `select recipe_id from recipesForMeal
-            join meals 
-            on meals.meal_id = recipesForMeal.meal_id 
-            where meals.user_id = '${user_ID}' and meals.meal_id = '${meal_ID}'`)
+    const recipes_ids = await DButils.execQuery(
+        `select recipe_id from recipesForMeal
+        join meals 
+        on meals.meal_id = recipesForMeal.meal_id 
+        where meals.user_id = '${user_ID}' and meals.meal_id = '${meal_ID}'`)
     
         if (recipes_ids && recipes_ids.length > 0) {
             const my_recipes_list = []
@@ -596,11 +589,7 @@ router.get("/preview/myMeals/:meal_id", async(req, res) => {
                 .catch((error) => {
                     res.sendStatus(error.response.status);
                 });
-        }
-    
-        //ans[element.meal_name] = {meal_name: element.meal_name, list:my_recipes_list};    
-    //});
-    //res.send(ans);
+        }       
 });
 
 
