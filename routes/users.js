@@ -584,16 +584,19 @@ router.get("/preview/myMeals/:meal_id", async(req, res) => {
             `select recipe_id from recipesForMeal
             join meals 
             on meals.meal_id = recipesForMeal.meal_id 
+            left join MyRecipes
+            on recipesForMeal.recipe_id = MyRecipes.recipe_id
             where meals.user_id = '${user_ID}' 
             and meals.meal_id = '${meal_ID}'`)
-    
+
         if (recipes_ids && recipes_ids.length > 0) {
             const my_recipes_list = []
             recipes_ids.forEach(recipeId => {
                 my_recipes_list.push(recipeId.recipe_id);
             });
             let fromApi = my_recipes_list.filter(recipe => !isNaN(Boolean(recipe)))
-            let notFromApi = my_recipes_list.filter(recipe => isNaN(Boolean(recipe)))
+            
+            let notFromApi = recipes_ids.filter(recipe => isNaN(Boolean(recipe.recipe_id)))
             notFromApi = notFromApi.map((recipe) => {
                 let recipeTestDetails = JSON.parse(recipe.details);
                 return recipeTestDetails
