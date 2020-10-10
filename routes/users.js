@@ -37,44 +37,69 @@ router.get("/myMealRecipes/:mealId", async(req, res) => {
 });
 // get params: recipeId
 //Return the meal flag, if the meal should be marked for in this recipe
-router.get("/getRecipesMealsFlags/:recipeId/:mealId", async(req, res) => {
+router.get("/getRecipesMealsFlags/:recipeId", async(req, res) => {
     try{
-    const meal_ID = req.session.mealId;
     const user_ID = req.session.user_id;
     const recipe_ID = req.params.recipeId;
 
-    // const meals = await DButils.execQuery(
-    //     `SELECT meal_name,meal_id FROM meals 
-    //     WHERE user_id = '${user_ID}'`)
+    const meals = await DButils.execQuery(
+        `SELECT meal_name,meal_id FROM meals 
+        WHERE user_id = '${user_ID}'`)
 
-    // const mr = await DButils.execQuery(
-    //     `SELECT meal_id FROM recipesForMeal 
-    //     WHERE recipe_id = '${recipe_ID}'`)
+    const mr = await DButils.execQuery(
+        `SELECT meal_id FROM recipesForMeal 
+        WHERE recipe_id = '${recipe_ID}'`)
     
-    const result = await DButils.execQuery(
-        `SELECT recipesForMeal.meal_id, recipesForMeal.recipe_id, meals.user_id
-        FROM recipesForMeal
-        LEFT JOIN meals
-        ON recipesForMeal.meal_id = meals.meal_id WHERE meal_id='${meal_ID}' AND user_id='${user_ID}'`)
-        
-    // var ans = {}
+    var ans = {}
 
-    // meals.forEach(meal => {
-    //     ans[meal.meal_id] = {name : meal.meal_name, meal_id : meal.meal_id, flag : mr.includes(meal.meal_id)}
-    // });  
+    meals.forEach(meal => {
+        ans[meal.meal_id] = {name : meal.meal_name, meal_id : meal.meal_id, flag : mr.includes(meal.meal_id)}
+    });  
     
-    if (result.find((x) => x.recipe_id === recipe_ID)){
-        return true;
-    }
-    else{
-        return false;
-    }
-
     res.send(ans);
 }catch(error){
     res.send(error);
 }
 });
+
+// router.get("/getRecipesMealsFlags/:recipeId/:mealId", async(req, res) => {
+//     try{
+//     const meal_ID = req.session.mealId;
+//     const user_ID = req.session.user_id;
+//     const recipe_ID = req.params.recipeId;
+
+//     // const meals = await DButils.execQuery(
+//     //     `SELECT meal_name,meal_id FROM meals 
+//     //     WHERE user_id = '${user_ID}'`)
+
+//     // const mr = await DButils.execQuery(
+//     //     `SELECT meal_id FROM recipesForMeal 
+//     //     WHERE recipe_id = '${recipe_ID}'`)
+    
+//     const result = await DButils.execQuery(
+//         `SELECT recipesForMeal.meal_id, recipesForMeal.recipe_id, meals.user_id
+//         FROM recipesForMeal
+//         LEFT JOIN meals
+//         ON recipesForMeal.meal_id = meals.meal_id WHERE meal_id='${meal_ID}' AND user_id='${user_ID}'`)
+        
+//     // var ans = {}
+
+//     // meals.forEach(meal => {
+//     //     ans[meal.meal_id] = {name : meal.meal_name, meal_id : meal.meal_id, flag : mr.includes(meal.meal_id)}
+//     // });  
+    
+//     if (result.find((x) => x.recipe_id === recipe_ID)){
+//         return true;
+//     }
+//     else{
+//         return false;
+//     }
+
+//     res.send(ans);
+// }catch(error){
+//     res.send(error);
+// }
+// });
 
 //Return the meal_name according to user_id
 router.get("/myMeals", async(req, res) => {
