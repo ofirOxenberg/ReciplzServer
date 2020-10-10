@@ -621,7 +621,6 @@ router.get("/preview/myMeals/:meal_id", async (req, res) => {
             search_util.getRecipesInfo(fromApi, true)
                 .then((info_array) => res.send([...info_array, ...notFromApi]))
                 .catch((error) => {
-                    res.status(444).json({ my_recipes_list,recipes_ids,notFromApi,fromApi, error, m: error.message })
                     res.sendStatus(error.response.status);
                 });
         } else {
@@ -629,9 +628,7 @@ router.get("/preview/myMeals/:meal_id", async (req, res) => {
         }
     } catch (err) {
         res.json({
-            err: err,
-            message: err.message,
-            recipes_ids
+            message: err.message,      
         })
     }
 });
