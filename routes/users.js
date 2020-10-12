@@ -293,7 +293,6 @@ router.put("/recipesForMeal/recipeId/:recipeId/:mealId", async (req, res, next) 
 router.put("/add_new_recipe", async (req, res, next) => {
     try {
         const user_ID = req.session.user_id;
-        const result = await DButils.execQuery("SELECT details FROM MyRecipes");
         const username = await DButils.execQuery(
             `SELECT username FROM users WHERE user_id='${user_ID}'`
         );
